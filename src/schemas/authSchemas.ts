@@ -8,5 +8,6 @@ export const UserSchema = z.object({
 
 export const RegisterFormSchema = UserSchema.pick({ name: true, email: true }).extend({
     password: z.string(),
-    password_confirmation: z.string()
+    password_confirmation: z.string(),
+    phone: z.string()
 });

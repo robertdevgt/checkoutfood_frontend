@@ -1,11 +1,14 @@
+import 'react-phone-number-input/style.css';
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import type { RegisterForm } from "types/authTypes";
 import { createAccount } from "@/api/AuthAPI";
 import ErrorMessage from "@/components/ErrorMessage";
 import toast from "react-hot-toast";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import PhoneInput from 'react-phone-number-input';
+
 
 export default function Register() {
     const {
@@ -13,6 +16,7 @@ export default function Register() {
         register,
         watch,
         reset,
+        control,
         formState: { errors }
     } = useForm<RegisterForm>();
 
@@ -76,6 +80,32 @@ export default function Register() {
                 </div>
 
                 <div>
+                    <label htmlFor="" className="block text-sm font-medium text-gray-700">
+                        Número de teléfono
+                    </label>
+                    <Controller
+                        name='phone'
+                        control={control}
+                        rules={{ required: 'El número de teléfono es obligatorio' }}
+                        render={({ field, fieldState }) => (
+                            <div>
+                                <PhoneInput
+                                    {...field}
+                                    placeholder="Ingresa tu número"
+                                    onChange={field.onChange}
+                                    className='mt-1 block w-full rounded-md border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none'
+                                />
+                                {fieldState.error && (
+                                    <ErrorMessage>
+                                        {fieldState.error.message}
+                                    </ErrorMessage>
+                                )}
+                            </div>
+                        )}
+                    />
+                </div>
+
+                <div>
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                         Contraseña
                     </label>
@@ -114,6 +144,7 @@ export default function Register() {
                     />
                     {errors.password_confirmation && <ErrorMessage>{errors.password_confirmation.message}</ErrorMessage>}
                 </div>
+
 
                 <button
                     disabled={isPending}

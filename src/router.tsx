@@ -5,6 +5,8 @@ import AuthLayout from "@/layouts/AuthLayout";
 
 const Index = lazy(() => import("@/views/public/Index"));
 const Register = lazy(() => import("@/views/auth/Register"));
+const ConfirmAccount = lazy(() => import("@/views/auth/ConfirmAccount"));
+const RequestConfirmationCode = lazy(() => import("@/views/auth/RequestConfirmationCode"));
 
 export default function Router() {
     return (
@@ -17,6 +19,8 @@ export default function Router() {
 
                     <Route element={<AuthLayout />}>
                         <Route path="/register" element={<Register />} />
+                        <Route path="/confirm-account" element={<ConfirmAccount />} />
+                        <Route path="/request-code" element={<RequestConfirmationCode />} />
                     </Route>
                 </Routes>
             </Suspense>
