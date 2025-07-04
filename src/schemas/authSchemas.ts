@@ -1,9 +1,9 @@
 import z from "zod";
 
 export const UserSchema = z.object({
-    id: z.string(),
+    _id: z.string(),
     name: z.string(),
-    email: z.string()
+    email: z.string(),
 });
 
 export const RegisterFormSchema = UserSchema.pick({ name: true, email: true }).extend({

@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Logo from "@/components/Logo";
 
-export default function AuthLayout() {
+export default function AuthenticationLayout() {
     return (
         <div className="h-screen grid grid-cols-1 md:grid-cols-2 bg-gray-100">
             <div className="flex items-center justify-center p-6 shadow-lg">

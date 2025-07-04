@@ -16,6 +16,9 @@
       "@/type/*": ["types/*"],
       "@/schemas/*": ["schemas/*"],
       "@/lib/*": ["lib/*"],
+      "@/hooks/*": ["hooks/*"],
+      "@/stores/*": ["stores/*"],
+      "@/store": ["store.ts"],
     },
 
     /* Bundler mode */
