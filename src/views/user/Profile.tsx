@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AddressesComponent from "@/components/user/AddressesComponent";
 import ProfileComponent from "@/components/user/ProfileComponent";
+import RestaurantsComponent from "@/components/user/RestaurantsComponent";
 
 const Components: { [key: number]: React.ReactElement } = {
   1: <ProfileComponent />,
-  2: <AddressesComponent />
+  2: <AddressesComponent />,
+  3: <RestaurantsComponent />
 }
 
 export default function Profile() {
@@ -39,15 +41,22 @@ export default function Profile() {
               Mi perfil
             </button>
 
-            <button onClick={() => setComponent(2)} className={`${component === 2 && 'bg-blue-500/20'} w-full text-left px-4 py-2 rounded-md hover:bg-blue-200 text-blue-700 font-medium transition cursor-pointer`}>
-              Direcciones
-            </button>
+            {data.role === '1' ? (
+              <button onClick={() => setComponent(3)} className={`${component === 3 && 'bg-blue-500/20'} w-full text-left px-4 py-2 rounded-md hover:bg-blue-200 text-blue-700 font-medium transition cursor-pointer`}>
+                Restaurantes
+              </button>
+            ) : (
+              <button onClick={() => setComponent(2)} className={`${component === 2 && 'bg-blue-500/20'} w-full text-left px-4 py-2 rounded-md hover:bg-blue-200 text-blue-700 font-medium transition cursor-pointer`}>
+                Direcciones
+              </button>
+            )}
 
-            <button className={`${component === 3 && 'bg-blue-500/20'} w-full text-left px-4 py-2 rounded-md hover:bg-blue-200 text-blue-700 font-medium transition cursor-pointer`}>
+            <button className={`${component === 4 && 'bg-blue-500/20'} w-full text-left px-4 py-2 rounded-md hover:bg-blue-200 text-blue-700 font-medium transition cursor-pointer`}>
               Configuraciones
             </button>
+
             <button
-              className="w-full text-left px-4 py-2 mt-4 rounded-md bg-red-100 hover:bg-red-200 text-red-600 font-medium transition"
+              className="w-full  px-4 py-2 mt-4 rounded-md bg-red-500 hover:bg-red-900 font-medium transition text-center text-white cursor-pointer"
               onClick={handleLogout}
             >
               Cerrar sesión

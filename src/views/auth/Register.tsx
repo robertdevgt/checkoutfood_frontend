@@ -106,6 +106,24 @@ export default function Register() {
                 </div>
 
                 <div>
+                    <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+                        ¿Que deseas hacer?
+                    </label>
+                    <select
+                        {...register('role', {
+                            required: 'El rol es requerido'
+                        })}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                    >
+                        <option value="">--SELECCIONE UN OPCIÓN--</option>
+                        <option value="0">Realizar pedidos</option>
+                        <option value="1">Registrar mi negocio</option>
+                    </select>
+
+                    {errors.role && <ErrorMessage>{errors.role.message}</ErrorMessage>}
+                </div>
+
+                <div>
                     <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                         Contraseña
                     </label>

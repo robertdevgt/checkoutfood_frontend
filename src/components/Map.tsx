@@ -1,5 +1,5 @@
-import { GoogleMap, Marker, useJsApiLoader, type Libraries } from "@react-google-maps/api";
-import { useRef, useEffect, type Dispatch, type SetStateAction } from "react";
+import { GoogleMap, Marker, useJsApiLoader, Autocomplete, type Libraries } from "@react-google-maps/api";
+import { useRef, useEffect, type Dispatch, type SetStateAction, useState } from "react";
 
 const containerStyle = {
     width: "100%",
@@ -23,6 +23,8 @@ type Props = {
 
 export default function Map({ address, setAddress, position, setPosition }: Props) {
     const mapRef = useRef<google.maps.Map | null>(null);
+    const [autocomplete, setAutocomplete] = useState<google.maps.places.Autocomplete | null>(null);
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
     const { isLoaded } = useJsApiLoader({
         id: "google-map-script",
@@ -59,6 +61,18 @@ export default function Map({ address, setAddress, position, setPosition }: Prop
         }
     }, []);
 
+    const onPlaceChanged = () => {
+        if (autocomplete !== null) {
+            const place = autocomplete.getPlace();
+            if (place.geometry && place.geometry.location) {
+                const location = place.geometry.location;
+                const lat = location.lat();
+                const lng = location.lng();
+                setPosition({ lat, lng });
+            }
+        }
+    };
+
     const handleClick = async (e: google.maps.MapMouseEvent) => {
         if (e.latLng) {
             const lat = e.latLng.lat();
@@ -80,7 +94,19 @@ export default function Map({ address, setAddress, position, setPosition }: Prop
 
     return isLoaded ? (
         <div className="w-full max-w-4xl mx-auto px-4 py-6">
-            <div className="rounded-xl overflow-hidden shadow-lg border border-gray-200">
+            <div className="overflow-hidden shadow-lg border border-gray-200 space-y-5">
+
+                <Autocomplete
+                    onLoad={(ac) => setAutocomplete(ac)}
+                    onPlaceChanged={onPlaceChanged}
+                >
+                    <input
+                        type="text"
+                        ref={inputRef}
+                        placeholder="Buscar dirección"
+                        className="block w-full border border-gray-300 px-4 py-3 shadow-sm focus:border-blue-500 focus:ring-blue-500 focus:outline-none"
+                    />
+                </Autocomplete>
                 <GoogleMap
                     mapContainerStyle={containerStyle}
                     center={position || defaultCenter}
