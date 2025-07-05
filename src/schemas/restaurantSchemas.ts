@@ -12,3 +12,6 @@ export const RestaurantSchema = z.object({
 });
 
 export const RestaurantsSchema = z.array(RestaurantSchema);
+export const NerbyRestaurantsSchema = z.array(RestaurantSchema.pick({_id: true, name: true, address: true, logo: true}).extend({
+    distance: z.number()
+}));

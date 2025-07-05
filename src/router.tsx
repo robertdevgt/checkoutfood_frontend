@@ -5,6 +5,8 @@ import AuthenticationLayout from "@/layouts/AuthenticationLayout";
 import ProtectedLayout from "./layouts/ProtectedLayout";
 
 const Index = lazy(() => import("@/views/public/Index"));
+const Restaurants = lazy(() => import("@/views/public/Restaurants"));
+
 const Register = lazy(() => import("@/views/auth/Register"));
 const ConfirmAccount = lazy(() => import("@/views/auth/ConfirmAccount"));
 const RequestConfirmationCode = lazy(() => import("@/views/auth/RequestConfirmationCode"));
@@ -19,6 +21,7 @@ export default function Router() {
                 <Routes>
                     <Route element={<PublicLayout />}>
                         <Route path="/" element={<Index />} />
+                        <Route path="/restaurants" element={<Restaurants />} />
                     </Route>
 
                     <Route element={<AuthenticationLayout />}>

@@ -1,5 +1,6 @@
+import type { Coords } from "@/components/Map";
 import api from "@/lib/axios";
-import { RestaurantsSchema } from "@/schemas/restaurantSchemas";
+import { NerbyRestaurantsSchema, RestaurantsSchema } from "@/schemas/restaurantSchemas";
 import type { RestaurantForm } from "@/type/restaurantTypes";
 import { isAxiosError } from "axios";
 
@@ -29,6 +30,22 @@ export async function getAllRestaurants() {
         const { data } = await api(url);
         const result = RestaurantsSchema.safeParse(data);
 
+        if (result.success) {
+            return result.data
+        }
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+    }
+}
+
+export async function getNerbyRestaurants({ position }: { position: Coords }) {
+    try {
+        const url = `/restaurants/nerby/${position.lat}/${position.lng}`;
+        const { data } = await api(url);
+
+        const result = NerbyRestaurantsSchema.safeParse(data);
         if (result.success) {
             return result.data
         }
