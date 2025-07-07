@@ -1,7 +1,8 @@
 import type { Coords } from "@/components/Map";
 import api from "@/lib/axios";
-import { NerbyRestaurantsSchema, RestaurantsSchema } from "@/schemas/restaurantSchemas";
-import type { RestaurantForm } from "@/type/restaurantTypes";
+import { NerbyRestaurantsSchema, RestaurantDetailsSchema, RestaurantPublicViewSchema, RestaurantsSchema } from "@/schemas/restaurantSchemas";
+import type { ProductForm } from "@/type/productTypes";
+import type { Restaurant, RestaurantForm } from "@/type/restaurantTypes";
 import { isAxiosError } from "axios";
 
 export async function createRestaurant(restaurant: RestaurantForm) {
@@ -49,6 +50,60 @@ export async function getNerbyRestaurants({ position }: { position: Coords }) {
         if (result.success) {
             return result.data
         }
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+    }
+}
+
+export async function getRestaurantById({ restaurantId }: { restaurantId: Restaurant['_id'] }) {
+    try {
+        const url = `/restaurants/${restaurantId}`;
+        const { data } = await api(url);
+
+        const result = RestaurantPublicViewSchema.safeParse(data);
+
+        if (result.success) {
+            return result.data;
+        }
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+    }
+}
+
+export async function getRestaurantDetailsById({ restaurantId }: { restaurantId: Restaurant['_id'] }) {
+    try {
+        const url = `/restaurants/${restaurantId}`;
+        const { data } = await api(url);
+
+        const result = RestaurantDetailsSchema.safeParse(data);
+
+        if (result.success) {
+            return result.data;
+        }
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+    }
+}
+
+export async function addProduct({ product, restaurantId }: { product: ProductForm, restaurantId: Restaurant['_id'] }) {
+    try {
+        const url = `/restaurants/add-product/${restaurantId}`;
+        const formData = new FormData();
+        formData.append("img", product.img);
+        formData.append("name", product.name);
+        formData.append("description", product.description);
+        formData.append("price", product.price.toString());
+        formData.append("category", product.category);
+
+        const { data } = await api.post(url, formData);
+
+        return data;
     } catch (error) {
         if (isAxiosError(error) && error.response) {
             throw new Error(error.response.data.error);

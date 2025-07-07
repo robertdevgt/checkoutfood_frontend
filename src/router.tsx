@@ -6,6 +6,7 @@ import ProtectedLayout from "./layouts/ProtectedLayout";
 
 const Index = lazy(() => import("@/views/public/Index"));
 const Restaurants = lazy(() => import("@/views/public/Restaurants"));
+const Restaurant = lazy(() => import("@/views/public/Restaurant"));
 
 const Register = lazy(() => import("@/views/auth/Register"));
 const ConfirmAccount = lazy(() => import("@/views/auth/ConfirmAccount"));
@@ -13,6 +14,7 @@ const RequestConfirmationCode = lazy(() => import("@/views/auth/RequestConfirmat
 const Login = lazy(() => import("@/views/auth/Login"));
 
 const Profile = lazy(() => import("@/views/user/Profile"));
+const RestaurantDetails = lazy(() => import("@/views/user/RestaurantDetails"));
 
 export default function Router() {
     return (
@@ -22,6 +24,7 @@ export default function Router() {
                     <Route element={<PublicLayout />}>
                         <Route path="/" element={<Index />} />
                         <Route path="/restaurants" element={<Restaurants />} />
+                        <Route path="/restaurants/:id" element={<Restaurant />} />
                     </Route>
 
                     <Route element={<AuthenticationLayout />}>
@@ -33,6 +36,7 @@ export default function Router() {
 
                     <Route element={<ProtectedLayout />}>
                         <Route path="/profile" element={<Profile />} />
+                        <Route path="/restaurant/administrate/:id" element={<RestaurantDetails />} />
                     </Route>
                 </Routes>
             </Suspense>

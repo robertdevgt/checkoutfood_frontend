@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getNerbyRestaurants } from "@/api/RestaurantAPI";
 import { Eye } from "lucide-react";
 import { usePosition } from "@/hooks/usePosition";
+import { Link } from "react-router-dom";
 
 export default function Restaurants() {
   const { position } = usePosition();
@@ -45,10 +46,10 @@ export default function Restaurants() {
                 <p className="text-gray-600 mb-2">
                   {restaurant.address || "Dirección no disponible"}
                 </p>
-                <div className="flex items-center text-sm text-gray-500 gap-2">
+                <Link to={`/restaurants/${restaurant._id}`} className="flex items-center text-sm text-gray-500 gap-2">
                   <Eye className="w-4 h-4" />
                   Ver detalles
-                </div>
+                </Link>
               </div>
             </div>
           </div>

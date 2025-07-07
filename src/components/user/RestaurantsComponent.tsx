@@ -1,7 +1,8 @@
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import ModalCreateRestaurant from "../modals/ModalCreateRestaurant";
 import { useQuery } from "@tanstack/react-query";
 import { getAllRestaurants } from "@/api/RestaurantAPI";
+import { EyeIcon } from "lucide-react";
 
 export default function RestaurantsComponent() {
   const navigate = useNavigate();
@@ -25,17 +26,22 @@ export default function RestaurantsComponent() {
         {data.map(restaurant => (
           <div
             key={restaurant._id}
-            className="flex items-center gap-4 p-4 bg-white shadow rounded-lg mt-5"
+            className="flex items-center gap-4 p-4 bg-white shadow rounded-lg mt-5 justify-between"
           >
-            <img
-              src={`${import.meta.env.VITE_UPLOADS_URL}/${restaurant.logo}`}
-              alt={`Logo de ${restaurant.name}`}
-              className="object-cover rounded-full w-12 h-12"
-            />
+
             <div>
+              <img
+                src={`${import.meta.env.VITE_UPLOADS_URL}/${restaurant.logo}`}
+                alt={`Logo de ${restaurant.name}`}
+                className="object-cover rounded-full w-12 h-12"
+              />
               <p className="font-semibold text-lg">{restaurant.name}</p>
               <p className="text-gray-600 text-sm">{restaurant.description}</p>
             </div>
+
+            <Link to={`/restaurant/administrate/${restaurant._id}`}>
+              <EyeIcon />
+            </Link>
           </div>
         ))}
       </div>
