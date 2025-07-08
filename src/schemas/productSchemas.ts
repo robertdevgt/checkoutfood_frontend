@@ -9,3 +9,5 @@ export const ProductSchema = z.object({
     img: z.string(),
     status: z.boolean(),
 }); 
+
+export const ProductsSchema = z.array(ProductSchema);

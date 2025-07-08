@@ -1,7 +1,8 @@
 import type { Coords } from "@/components/Map";
 import api from "@/lib/axios";
-import { NerbyRestaurantsSchema, RestaurantDetailsSchema, RestaurantPublicViewSchema, RestaurantsSchema } from "@/schemas/restaurantSchemas";
-import type { ProductForm } from "@/type/productTypes";
+import { ProductsSchema } from "@/schemas/productSchemas";
+import { NerbyRestaurantsSchema, RestaurantSchema, RestaurantsSchema } from "@/schemas/restaurantSchemas";
+import type { Product, ProductForm } from "@/type/productTypes";
 import type { Restaurant, RestaurantForm } from "@/type/restaurantTypes";
 import { isAxiosError } from "axios";
 
@@ -62,7 +63,7 @@ export async function getRestaurantById({ restaurantId }: { restaurantId: Restau
         const url = `/restaurants/${restaurantId}`;
         const { data } = await api(url);
 
-        const result = RestaurantPublicViewSchema.safeParse(data);
+        const result = RestaurantSchema.safeParse(data);
 
         if (result.success) {
             return result.data;
@@ -74,12 +75,29 @@ export async function getRestaurantById({ restaurantId }: { restaurantId: Restau
     }
 }
 
-export async function getRestaurantDetailsById({ restaurantId }: { restaurantId: Restaurant['_id'] }) {
+export async function getAllRestaurantProducts({ restaurantId, query }: { restaurantId: Restaurant['_id'], query: string }) {
     try {
-        const url = `/restaurants/${restaurantId}`;
+        const url = `/restaurants/products/${restaurantId}?query=${query}`;
         const { data } = await api(url);
 
-        const result = RestaurantDetailsSchema.safeParse(data);
+        const result = ProductsSchema.safeParse(data);
+
+        if (result.success) {
+            return result.data;
+        }
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+    }
+}
+
+export async function getAvailableRestaurantProducts({ restaurantId, query }: { restaurantId: Restaurant['_id'], query: string }) {
+    try {
+        const url = `/restaurants/products/${restaurantId}?query=${query}&status=true`;
+        const { data } = await api(url);
+
+        const result = ProductsSchema.safeParse(data);
 
         if (result.success) {
             return result.data;
@@ -102,6 +120,19 @@ export async function addProduct({ product, restaurantId }: { product: ProductFo
         formData.append("category", product.category);
 
         const { data } = await api.post(url, formData);
+
+        return data;
+    } catch (error) {
+        if (isAxiosError(error) && error.response) {
+            throw new Error(error.response.data.error);
+        }
+    }
+}
+
+export async function changeProductStatus({ productId }: { productId: Product['_id'] }) {
+    try {
+        const url = `/restaurants/updateproduct-status/${productId}`;
+        const { data } = await api.patch(url);
 
         return data;
     } catch (error) {
