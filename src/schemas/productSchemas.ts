@@ -10,4 +10,13 @@ export const ProductSchema = z.object({
     status: z.boolean(),
 }); 
 
+export const CartItemSchema = z.object({
+    product_id: z.string(),
+    product_name: z.string(),
+    price: z.number(),
+    quantity: z.number(),
+    sub_total: z.number(),
+    img: z.string()
+});
+
 export const ProductsSchema = z.array(ProductSchema);

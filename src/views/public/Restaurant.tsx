@@ -5,10 +5,13 @@ import { getAvailableRestaurantProducts, getRestaurantById } from "@/api/Restaur
 import { SearchIcon, TrashIcon } from "lucide-react";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { useAppStore } from "@/store";
 
 export default function Restaurant() {
     const params = useParams<{ id: Restaurant['_id'] }>();
     const id = params.id!!;
+
+    const addToCart = useAppStore((state) => state.addToCart);
 
     const { data: restaurant, isLoading, isError } = useQuery({
         queryKey: ['getRestaurantById', id],
@@ -43,9 +46,7 @@ export default function Restaurant() {
     if (isLoading) return <p className="text-center mt-10">Cargando restaurante...</p>;
     if (isError) return <p className="text-center mt-10 text-red-500">Error al cargar restaurante.</p>;
 
-    // const addToCart = (productId: string) => {
-    //     console.log(`Producto ${productId} agregado al carrito`);
-    // };
+
 
     if (restaurant) return (
         <div>
@@ -107,7 +108,7 @@ export default function Restaurant() {
                                         <p className="text-green-600 text-xl font-bold">${product.price.toFixed(2)}</p>
                                     </div>
 
-                                    <button className="bg-blue-500 text-white p-2 mt-5 font-bold rounded-xl cursor-pointer hover:bg-blue-600 transition-colors">
+                                    <button onClick={() => addToCart(product)} className="bg-blue-500 text-white p-2 mt-5 font-bold rounded-xl cursor-pointer hover:bg-blue-600 transition-colors">
                                         Agregar al Carrito
                                     </button>
                                 </div>
