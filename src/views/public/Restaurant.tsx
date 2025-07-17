@@ -1,53 +1,83 @@
 import type { Restaurant } from "@/type/restaurantTypes";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { getAvailableRestaurantProducts, getRestaurantById } from "@/api/RestaurantAPI";
 import { SearchIcon, TrashIcon } from "lucide-react";
-import { useState, type ChangeEvent, type FormEvent } from "react";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { useAppStore } from "@/store";
+import CategoryItem from "@/components/CategoryItem";
+import LoadingProductsComponent from "@/components/LoadingProductsComponent";
+import type { Product } from "@/type/productTypes";
+
+export const productCategories = [
+    { key: 'food', value: 'food', label: 'Comida' },
+    { key: 'coffes', value: 'coffes', label: 'Café' },
+    { key: 'cakes', value: 'cakes', label: 'Pasteles' },
+    { key: 'drinks', value: 'drinks', label: 'Bebidas' },
+] as const;
+
+export type filtersProductosType = {
+    query: string;
+    category: string;
+}
+
+const filtersProducts: filtersProductosType = {
+    query: '',
+    category: ''
+}
+
 
 export default function Restaurant() {
     const params = useParams<{ id: Restaurant['_id'] }>();
     const id = params.id!!;
+    const navigate = useNavigate();
 
     const addToCart = useAppStore((state) => state.addToCart);
+    const logedIn = useAppStore((state) => state.logedIn);
 
     const { data: restaurant, isLoading, isError } = useQuery({
         queryKey: ['getRestaurantById', id],
         queryFn: () => getRestaurantById({ restaurantId: id }),
     });
 
-    const [searchParams, setSearchParams] = useSearchParams('');
-    const [query, setQuery] = useState<string>(searchParams.get("query") ?? "");
+    const [filters, setFilters] = useState<filtersProductosType>(filtersProducts);
 
+    const filtersParams = new URLSearchParams(filters).toString();
+
+    useEffect(() => {
+        if (filtersParams) {
+            navigate(`${location.pathname}?${filtersParams}`);
+        }
+    }, [filters]);
 
     const handleSearchItem = (e: ChangeEvent<HTMLInputElement>) => {
-        setQuery(e.target.value);
-    }
-
-    const handleSetFilters = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setSearchParams(query ? { query } : {});
+        setFilters(prev => ({
+            ...prev,
+            [e.target.id]: e.target.value
+        }))
     }
 
     const handleClearFilters = () => {
-        setSearchParams({});
-        setQuery('');
+        navigate(location.pathname);
+        setFilters(filtersProducts);
     }
 
     const { data: products, isLoading: isLoadingProducts, isFetching } = useQuery({
-        queryKey: ['getAvailableRestaurantProducts', id, searchParams.get("query")],
-        queryFn: () => getAvailableRestaurantProducts({ restaurantId: id, query: searchParams.get("query") ?? '' }),
+        queryKey: ['getAvailableRestaurantProducts', id, filtersParams],
+        queryFn: () => getAvailableRestaurantProducts({ restaurantId: id, filters: filtersParams }),
         placeholderData: keepPreviousData
     });
 
+    const handleAddToCart = (product: Product) => {
+        if (!logedIn) {
+            navigate('/login', { state: location.pathname });
+            return;
+        }
+        addToCart(product, id)
+    }
 
     if (isLoading) return <p className="text-center mt-10">Cargando restaurante...</p>;
     if (isError) return <p className="text-center mt-10 text-red-500">Error al cargar restaurante.</p>;
-
-
-
     if (restaurant) return (
         <div>
             <div className="h-32 lg:h-72 overflow-hidden shadow-md bg-[url(/img/banner.webp)]  bg-cover bg-center">
@@ -64,11 +94,13 @@ export default function Restaurant() {
             <div className="lg:p-20">
 
                 <div className="p-5 flex w-full justify-end items-center gap-4 bg-white rounded-md">
-                    <form className="flex items-center gap-2" onSubmit={(e) => handleSetFilters(e)}>
+                    <form className="flex items-center gap-2" >
                         <div className="flex items-center gap-3 bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 shadow transition-all focus-within:ring-2 focus-within:ring-blue-400">
                             <input
+                                autoComplete="off"
+                                id='query'
                                 onChange={handleSearchItem}
-                                value={query}
+                                value={filters.query}
                                 type="text"
                                 placeholder="Buscar..."
                                 className="w-80 bg-transparent outline-none border-none text-gray-700 placeholder-gray-400"
@@ -84,9 +116,23 @@ export default function Restaurant() {
                     </form>
                 </div>
 
-                <div className="border-gray-200 space-y-5">
+                <div className="flex flex-col space-y-5 p-5 shadow mb-10">
+                    <h3 className="font-bold text-xl">Categorías</h3>
+                    <div className="flex justify-between">
+
+                        {productCategories.map(category => (
+                            <CategoryItem
+                                setFilters={setFilters}
+                                key={category.key}
+                                category={category.key}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                <div className="border-gray-200 space-y-5 h-96">
                     <h3 className="font-bold text-4xl">Productos:</h3>
-                    {(isLoadingProducts || isFetching) && <LoadingSpinner />}
+                    {(isLoadingProducts || isFetching) && <LoadingProductsComponent />}
                     {products?.length === 0 ? (
                         <p className="text-center">No hay productos</p>
                     ) : (
@@ -108,14 +154,13 @@ export default function Restaurant() {
                                         <p className="text-green-600 text-xl font-bold">${product.price.toFixed(2)}</p>
                                     </div>
 
-                                    <button onClick={() => addToCart(product)} className="bg-blue-500 text-white p-2 mt-5 font-bold rounded-xl cursor-pointer hover:bg-blue-600 transition-colors">
+                                    <button onClick={() => handleAddToCart(product)} className="bg-blue-500 text-white p-2 mt-5 font-bold rounded-xl cursor-pointer hover:bg-blue-600 transition-colors">
                                         Agregar al Carrito
                                     </button>
                                 </div>
                             ))}
                         </div>
                     )}
-
                 </div>
             </div>
         </div>

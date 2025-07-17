@@ -1,5 +1,5 @@
 import type { LoginForm } from "@/type/authTypes";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import ErrorMessage from "@/components/ErrorMessage";
@@ -9,7 +9,10 @@ import { useAppStore } from "@/store";
 
 export default function Login() {
 
-  const login = useAppStore((state)=> state.login);
+  const location = useLocation();
+  const previousPath = location.state;
+
+  const login = useAppStore((state) => state.login);
   const navigate = useNavigate();
 
   const {
@@ -26,7 +29,11 @@ export default function Login() {
       setValue('password', '');
     },
     onSuccess: () => {
-      navigate('/');
+      if (previousPath) {
+        navigate(previousPath);
+      } else {
+        navigate('/')
+      }
     }
   });
 

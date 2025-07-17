@@ -15,6 +15,7 @@ const Login = lazy(() => import("@/views/auth/Login"));
 
 const Profile = lazy(() => import("@/views/user/Profile"));
 const RestaurantDetails = lazy(() => import("@/views/user/RestaurantDetails"));
+const FinishOrder = lazy(() => import("@/views/restaurants/FinishOrder"));
 
 export default function Router() {
     return (
@@ -25,6 +26,7 @@ export default function Router() {
                         <Route path="/" element={<Index />} />
                         <Route path="/restaurants" element={<Restaurants />} />
                         <Route path="/restaurants/:id" element={<Restaurant />} />
+                        <Route path="/restaurants/finish-order/:id" element={<FinishOrder />} />
                     </Route>
 
                     <Route element={<AuthenticationLayout />}>

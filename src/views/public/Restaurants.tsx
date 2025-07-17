@@ -37,11 +37,9 @@ export default function Restaurants() {
               <div className="flex-1">
                 <div className="flex justify-between items-start">
                   <h2 className="text-xl font-bold text-gray-800 mb-1">{restaurant.name}</h2>
-                  {restaurant.distance && (
-                    <span className="bg-blue-50 text-blue-600 text-xs font-semibold px-2 py-1 rounded-full">
-                      {restaurant.distance.toFixed(2)} km
-                    </span>
-                  )}
+                  <span className="bg-blue-50 text-blue-600 text-xs font-semibold px-2 py-1 rounded-full">
+                    {restaurant.distance.toFixed(2)} km
+                  </span>
                 </div>
                 <p className="text-gray-600 mb-2">
                   {restaurant.address || "Dirección no disponible"}

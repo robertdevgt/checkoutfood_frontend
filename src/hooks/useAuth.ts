@@ -7,7 +7,8 @@ export const useAuth = () => {
 
     const { data, isError, isLoading } = useQuery({
         queryKey: ['user'],
-        queryFn: getUser
+        queryFn: getUser,
+        retry: false
     });
 
     if (isError) {

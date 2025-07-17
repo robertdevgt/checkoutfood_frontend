@@ -92,9 +92,9 @@ export async function getAllRestaurantProducts({ restaurantId, query }: { restau
     }
 }
 
-export async function getAvailableRestaurantProducts({ restaurantId, query }: { restaurantId: Restaurant['_id'], query: string }) {
+export async function getAvailableRestaurantProducts({ restaurantId, filters }: { restaurantId: Restaurant['_id'], filters: string }) {
     try {
-        const url = `/restaurants/products/${restaurantId}?query=${query}&status=true`;
+        const url = `/restaurants/products/${restaurantId}?${filters}&status=true`;
         const { data } = await api(url);
 
         const result = ProductsSchema.safeParse(data);
